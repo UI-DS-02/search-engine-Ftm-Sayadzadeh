@@ -53,4 +53,67 @@ public class OperationManager {
             }
         }
     }
+
+    // search operation
+    public ArrayList<String> search(String command) {
+        // change command to lower case
+        command = command.toLowerCase();
+        ArrayList<String> shouldNotBe = new ArrayList<>(); // "-"
+        ArrayList<String> shouldBe = new ArrayList<>();  // nothing
+        ArrayList<String> atLeast = new ArrayList<>(); // "+"
+        String[] splitCommand = command.split(" ");
+        for (String s : splitCommand) {
+            // at least ( Or ) -----------------------------------------------------------------------------------------
+            if (s.charAt(0) == '+') {
+                String word = s.substring(1);
+                if (dictionaries.get(word) != null) {
+                    // if it is the first list , we should add all dictionary names of this list
+                    if (atLeast.size() == 0)
+                        atLeast.addAll(dictionaries.get(word));
+                        // we should check and just add new dictionaries
+                    else {
+                        for (String element : dictionaries.get(word)) {
+                            if (!atLeast.contains(element))
+                                atLeast.add(element);
+                        }
+                    }
+                }
+            }
+            // exceptions ( Not ) --------------------------------------------------------------------------------------
+            else if (s.charAt(0) == '-') {
+                String word = s.substring(1);
+                if (dictionaries.get(word) != null) {
+                    // if it is the first list , we should add all dictionary names of this list
+                    if(shouldNotBe.size() == 0)
+                        shouldNotBe.addAll(dictionaries.get(word));
+                        // we should check and just add new dictionaries
+                    else {
+                        for (String element : dictionaries.get(word)) {
+                            if (!shouldNotBe.contains(element))
+                                shouldNotBe.add(element);
+                        }
+                    }
+                }
+            }
+            // ( And ) -------------------------------------------------------------------------------------------------
+            else {
+                if (dictionaries.get(s) != null) {
+                    if (shouldBe.size() == 0)
+                        shouldBe.addAll(dictionaries.get(s));
+                    else
+                        shouldBe.retainAll(dictionaries.get(s));
+                } else {
+                    /* this word does not exist in our dictionaries
+                    we should clear all data in shouldBe list :)
+                     */
+                    if (shouldBe.size() != 0)
+                        shouldBe.clear();
+                }
+            }
+        }
+        // find result list ------------------------
+        ArrayList<String> output = new ArrayList<>();
+        // code
+        return output;
+    }
 }
