@@ -112,8 +112,32 @@ public class OperationManager {
             }
         }
         // find result list ------------------------
-        ArrayList<String> output = new ArrayList<>();
-        // code
-        return output;
+        return getResult(atLeast , shouldBe , shouldNotBe) ;
+    }
+    public ArrayList<String> getResult(ArrayList<String> atLeast , ArrayList<String> shouldBe , ArrayList<String> shouldNotBe){
+        ArrayList<String> result = new ArrayList<>();
+        if (shouldBe.size() != 0 && atLeast.size() != 0) {
+            if (shouldBe.size() < atLeast.size()) {
+                // all shouldBe list should be added
+                result.addAll(shouldBe);
+                // remove elements from output list if atLeast does not contain elements
+                for (int i = 0; i < result.size(); i++) {
+                    if (!atLeast.contains(result.get(i)))
+                        result.remove(result.get(i));
+                }
+            } else {
+                result.addAll(atLeast);
+                for (int i = 0; i < result.size(); i++) {
+                    if (!shouldBe.contains(result.get(i)))
+                        result.remove(result.get(i));
+                }
+            }
+        } else {
+            result.addAll(shouldBe);
+            result.addAll(atLeast);
+        }
+        // we should remove elements which exist in notShouldBe list
+        result.removeAll(shouldNotBe);
+        return result;
     }
 }
