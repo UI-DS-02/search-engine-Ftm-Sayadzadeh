@@ -10,6 +10,7 @@ import java.util.Scanner;
 public class OperationManager {
     private final HashMap<String, ArrayList<String>> dictionaries;
     private final File[] files;
+    private final StopWordManager stopWordManager = new StopWordManager();
 
     public OperationManager(File[] files) {
         this.dictionaries = new HashMap<>();
@@ -25,6 +26,8 @@ public class OperationManager {
         return files;
     }
 
+    // ------------------- methods -----------------------
+
     // prepare file and delete all char except a-z and A-Z
     public void prepareFiles() throws IOException {
         for (File f : files) {
@@ -36,6 +39,9 @@ public class OperationManager {
                 String[] split = text.split("[^a-zA-Z]");
 
                 for (String s : split) {
+                    // for stop word just continue
+                    if(stopWordManager.getStopWords().contains(s))
+                        continue;
                     /* if map contain this word as key &
                     this file name does not add to this key value before ,
                      it should be added
@@ -68,6 +74,10 @@ public class OperationManager {
             // at least ( Or ) -----------------------------------------------------------------------------------------
             if (s.charAt(0) == '+') {
                 String word = s.substring(1);
+                // for stop word just continue
+                if(stopWordManager.getStopWords().contains(word))
+                    continue;
+
                 if (dictionaries.get(word) != null) {
                     // if it is the first list , we should add all dictionary names of this list
                     if (atLeast.size() == 0)
@@ -84,6 +94,10 @@ public class OperationManager {
             // exceptions ( Not ) --------------------------------------------------------------------------------------
             else if (s.charAt(0) == '-') {
                 String word = s.substring(1);
+                // for stop word just continue
+                if(stopWordManager.getStopWords().contains(word))
+                    continue;
+
                 if (dictionaries.get(word) != null) {
                     // if it is the first list , we should add all dictionary names of this list
                     if (shouldNotBe.size() == 0)
@@ -99,6 +113,10 @@ public class OperationManager {
             }
             // ( And ) -------------------------------------------------------------------------------------------------
             else {
+                // for stop word just continue
+                if(stopWordManager.getStopWords().contains(s))
+                    continue;
+                //---------------------------------
                 if (dictionaries.get(s) != null) {
                     if (shouldBe.size() == 0)
                         shouldBe.addAll(dictionaries.get(s));
